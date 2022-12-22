@@ -3,6 +3,8 @@ package it.vitalegi.kata;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -11,11 +13,14 @@ class ArgsTests {
 
 	@Test
 	void test_args() {
-		Args args = new Args("a#,b!,c,d&", "-a 10   -b true   -c  hello   -d aaaa");
+		Args args = new Args("a#,b!,c,d&,e%,f$",
+				"-a 10 -f 10000000.002251 -e 2022-12-25  -b true   -c  hello   -d aaaa");
 		assertEquals(10, args.getInt("a"));
 		assertEquals(true, args.getBoolean("b"));
 		assertEquals("hello", args.getString("c"));
 		assertEquals("aaaa", args.getString("d"));
+		assertEquals(LocalDate.of(2022, 12, 25), args.getLocalDate("e"));
+		assertEquals(new BigDecimal("10000000.002251"), args.getBigDecimal("f"));
 	}
 
 	@Test
@@ -65,6 +70,18 @@ class ArgsTests {
 	void test_getString_stringHasWhitespacesAndDoublequotes_shouldReturnValue() {
 		Args args = new Args("a", "-a \"hello \\\"world\\\"\"");
 		assertEquals("hello \\\"world\\\"", args.getString("a"));
+	}
+
+	@Test
+	void test_getLocalDate_validValue_shouldReturnValue() {
+		Args args = new Args("a%", "-a 2022-12-22");
+		assertEquals(LocalDate.of(2022, 12, 22), args.getLocalDate("a"));
+	}
+
+	@Test
+	void test_getBigDecimal_validValue_shouldReturnValue() {
+		Args args = new Args("a$", "-a 10000000.002251");
+		assertEquals(new BigDecimal("10000000.002251"), args.getBigDecimal("a"));
 	}
 
 	@Test

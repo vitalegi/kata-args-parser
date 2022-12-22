@@ -1,18 +1,22 @@
 package it.vitalegi.kata;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.vitalegi.kata.parser.BigDecimalParser;
 import it.vitalegi.kata.parser.BooleanParser;
 import it.vitalegi.kata.parser.IntegerParser;
+import it.vitalegi.kata.parser.LocalDateParser;
 import it.vitalegi.kata.parser.Parser;
 import it.vitalegi.kata.parser.StringParser;
 
 public class Args {
 
 	protected static final Parser<?>[] PARSERS = new Parser[] { new IntegerParser(), new BooleanParser(),
-			new StringParser() };
+			new StringParser(), new LocalDateParser(), new BigDecimalParser() };
 
 	protected Map<String, Parser<?>> parsers;
 	protected Map<String, String> args;
@@ -43,6 +47,14 @@ public class Args {
 
 	public String getString(String name) {
 		return (String) getArgParser(name).getValue(getArgValue(name));
+	}
+
+	public LocalDate getLocalDate(String name) {
+		return (LocalDate) getArgParser(name).getValue(getArgValue(name));
+	}
+
+	public BigDecimal getBigDecimal(String name) {
+		return (BigDecimal) getArgParser(name).getValue(getArgValue(name));
 	}
 
 	protected Map<String, Parser<?>> extractFields(String format) {
