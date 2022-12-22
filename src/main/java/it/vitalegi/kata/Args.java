@@ -38,23 +38,23 @@ public class Args {
 	}
 
 	public Boolean getBoolean(String name) {
-		return (Boolean) getArgParser(name).getValue(getArgValue(name));
+		return (Boolean) getValue(name);
 	}
 
 	public Integer getInt(String name) {
-		return (Integer) getArgParser(name).getValue(getArgValue(name));
+		return (Integer) getValue(name);
 	}
 
 	public String getString(String name) {
-		return (String) getArgParser(name).getValue(getArgValue(name));
+		return (String) getValue(name);
 	}
 
 	public LocalDate getLocalDate(String name) {
-		return (LocalDate) getArgParser(name).getValue(getArgValue(name));
+		return (LocalDate) getValue(name);
 	}
 
 	public BigDecimal getBigDecimal(String name) {
-		return (BigDecimal) getArgParser(name).getValue(getArgValue(name));
+		return (BigDecimal) getValue(name);
 	}
 
 	protected Map<String, Parser<?>> extractFields(String format) {
@@ -110,6 +110,10 @@ public class Args {
 			map.put(name, value);
 		}
 		return map;
+	}
+
+	protected Object getValue(String name) {
+		return getArgParser(name).getValue(getArgValue(name));
 	}
 
 	protected Parser<?> getArgParser(String name) {
