@@ -1,5 +1,33 @@
 Implementare una classe `Args` che realizzi un parser.
 
+# Operative info
+
+## Requirements
+
+- JDK 8
+- maven
+
+## Build
+
+```
+mvn clean package
+
+or (to use the configured mvn):
+
+./mvnw clean package
+```
+
+## Run tests
+
+```
+mvn test
+
+or (to use the configured mvn):
+
+./mvnw test
+```
+
+
 # Fase 1
 
 Deve implementare i seguenti metodi:
@@ -50,7 +78,7 @@ Eccezione se il campo non esiste.
 
 Hai fatto un lavoro eccellente nel reinventare l'acqua calda, ora tutti vogliono usare la tua classe e ti si chiede di estenderla:
 
-- `LocalDate getDate(String name)`: restituisce un LocalDate. Il `type` corrispondente è `%`. Formato atteso del valore: `yyyy-MM-dd`
+- `LocalDate getLocalDate(String name)`: restituisce un LocalDate. Il `type` corrispondente è `%`. Formato atteso del valore: `yyyy-MM-dd`
 - `BigDecimal getBigDecimal(String name)`: restituisce un BigDecimal. Il `type` corrispondente è `$`. Formato atteso del valore: `123.456`
 
 # Fase 3
