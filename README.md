@@ -83,4 +83,19 @@ Hai fatto un lavoro eccellente nel reinventare l'acqua calda, ora tutti vogliono
 
 # Fase 3
 
-TBD
+- i valori di `args` possono contenere degli spazi, se la stringa inizia/finisce con doppi apici. `-c "hello world"` è una stringa valida, `-c hello world` no.
+- i valori in `format` possono avere un nome più lungo di un carattere
+- in `args` ogni `name` può avere più valori.
+    - Dati i precedenti getter, prevedi l'equivalente che restituisca la lista di valori, ad esempio `List<String> getStrings(String name)`
+    - I vecchi getter restituiscono il primo elemento della lista
+    - L'ordine della lista è quello dato dall'utente
+
+Esempio:
+
+```
+new Args("bool!,b#,text", "-bool true -bool false -b -53 -text hello -text world -text \"foo bar\"")
+getString("text"); // `"hello"`
+getStrings("text"); // ["hello", "world", "foo bar"]`
+getBoolean("bool"); // `true`
+getBooleans("bool"); // [true, false]`
+```
