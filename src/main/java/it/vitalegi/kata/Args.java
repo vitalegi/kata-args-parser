@@ -2,7 +2,6 @@ package it.vitalegi.kata;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,8 +14,17 @@ import it.vitalegi.kata.parser.StringParser;
 
 public class Args {
 
-	protected static final Parser<?>[] PARSERS = new Parser[] { new IntegerParser(), new BooleanParser(),
-			new StringParser(), new LocalDateParser(), new BigDecimalParser() };
+	protected static final Map<String, Parser<?>> PARSERS;
+	protected static final Parser<?> DEFAULT_PARSER = new StringParser();
+
+	static {
+		PARSERS = new HashMap<String, Parser<?>>();
+		PARSERS.put("#", new IntegerParser());
+		PARSERS.put("!", new BooleanParser());
+		PARSERS.put("&", new StringParser());
+		PARSERS.put("%", new LocalDateParser());
+		PARSERS.put("$", new BigDecimalParser());
+	}
 
 	protected Map<String, Parser<?>> parsers;
 	protected Map<String, String> args;
@@ -26,14 +34,6 @@ public class Args {
 
 	public Args(String format, String args) {
 		this.parsers = extractFields(format);
-		this.args = extractArgs(args);
-	}
-
-	protected void setFormat(String format) {
-		this.parsers = extractFields(format);
-	}
-
-	protected void setArgs(String args) {
 		this.args = extractArgs(args);
 	}
 
@@ -61,11 +61,19 @@ public class Args {
 		String[] entries = format.split(",");
 		Map<String, Parser<?>> parsers = new HashMap<>();
 		for (int i = 0; i < entries.length; i++) {
-			String entry = entries[i];
-			Parser<?> parser = Arrays.stream(PARSERS)//
-					.filter(p -> p.isMatch(entry)).findFirst()
-					.orElseThrow(() -> new ArgsException("No parser found for [" + entry + "]"));
-			parsers.put(parser.getName(entry), parser);
+			String entry = entries[i].trim();
+			if (entry.length() == 0) {
+				throw new ArgsException("Entry is empty and cannot be parsed");
+			}
+			String type = entry.substring(entry.length() - 1, entry.length());
+			if (PARSERS.containsKey(type)) {
+				if (entry.length() == 1) {
+					throw new ArgsException("Entry must have a name");
+				}
+				parsers.put(entry.substring(0, entry.length() - 1), PARSERS.get(type));
+			} else {
+				parsers.put(entry, DEFAULT_PARSER);
+			}
 		}
 		return parsers;
 	}

@@ -9,6 +9,13 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import it.vitalegi.kata.parser.BigDecimalParser;
+import it.vitalegi.kata.parser.BooleanParser;
+import it.vitalegi.kata.parser.IntegerParser;
+import it.vitalegi.kata.parser.LocalDateParser;
+import it.vitalegi.kata.parser.Parser;
+import it.vitalegi.kata.parser.StringParser;
+
 class ArgsTests {
 
 	@Test
@@ -21,6 +28,35 @@ class ArgsTests {
 		assertEquals("aaaa", args.getString("d"));
 		assertEquals(LocalDate.of(2022, 12, 25), args.getLocalDate("e"));
 		assertEquals(new BigDecimal("10000000.002251"), args.getBigDecimal("f"));
+	}
+
+	@Test
+	void test_extractFields() {
+		Args args = new Args();
+		Map<String, Parser<?>> fields = args.extractFields("a#,b!,c,d&,e%,f$,a2#,b2!,c2,d2&, e2%,f2$ ,abcd");
+		assertEquals(IntegerParser.class, fields.get("a").getClass());
+		assertEquals(IntegerParser.class, fields.get("a2").getClass());
+		assertEquals(BooleanParser.class, fields.get("b").getClass());
+		assertEquals(BooleanParser.class, fields.get("b2").getClass());
+		assertEquals(StringParser.class, fields.get("c").getClass());
+		assertEquals(StringParser.class, fields.get("c2").getClass());
+		assertEquals(StringParser.class, fields.get("d").getClass());
+		assertEquals(StringParser.class, fields.get("d2").getClass());
+		assertEquals(StringParser.class, fields.get("abcd").getClass());
+		assertEquals(LocalDateParser.class, fields.get("e").getClass());
+		assertEquals(LocalDateParser.class, fields.get("e2").getClass());
+		assertEquals(BigDecimalParser.class, fields.get("f").getClass());
+		assertEquals(BigDecimalParser.class, fields.get("f2").getClass());
+	}
+
+	@Test
+	void test_extractFields_missingName_shouldFail() {
+		Args args = new Args();
+		ArgsException e = assertThrows(ArgsException.class, () -> args.extractFields("#"));
+		assertEquals("Entry must have a name", e.getMessage());
+
+		e = assertThrows(ArgsException.class, () -> args.extractFields(""));
+		assertEquals("Entry is empty and cannot be parsed", e.getMessage());
 	}
 
 	@Test

@@ -6,12 +6,6 @@ import java.time.format.DateTimeParseException;
 import it.vitalegi.kata.ArgsException;
 
 public class LocalDateParser extends Parser<LocalDate> {
-
-	@Override
-	public boolean isMatch(String formatEntry) {
-		return getType(formatEntry).equals( "%");
-	}
-
 	@Override
 	public LocalDate getValue(String value) {
 		try {
