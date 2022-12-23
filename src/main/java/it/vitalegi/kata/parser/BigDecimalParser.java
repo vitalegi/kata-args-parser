@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import it.vitalegi.kata.ArgsException;
 
-public class BigDecimalParser extends Parser<BigDecimal> {
+public class BigDecimalParser implements Parser<BigDecimal> {
 
 	@Override
 	public BigDecimal getValue(String value) {

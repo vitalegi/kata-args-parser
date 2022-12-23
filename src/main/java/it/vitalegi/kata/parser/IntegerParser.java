@@ -2,7 +2,7 @@ package it.vitalegi.kata.parser;
 
 import it.vitalegi.kata.ArgsException;
 
-public class IntegerParser extends Parser<Integer> {
+public class IntegerParser implements Parser<Integer> {
 	@Override
 	public Integer getValue(String value) {
 		try {

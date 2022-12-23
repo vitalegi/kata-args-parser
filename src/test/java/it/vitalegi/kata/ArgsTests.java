@@ -24,7 +24,7 @@ class ArgsTests {
 	void test_args() {
 		Args args = new Args("a#,b!,c,d&,e%,f$",
 				"-a 10 -f 10000000.002251 -e 2022-12-25  -b true   -c  hello   -d aaaa");
-		assertEquals(10, args.getInt("a"));
+		assertEquals(10, args.getInteger("a"));
 		assertEquals(true, args.getBoolean("b"));
 		assertEquals("hello", args.getString("c"));
 		assertEquals("aaaa", args.getString("d"));
@@ -64,7 +64,7 @@ class ArgsTests {
 	@Test
 	void test_getInteger_validValue_shouldReturnValue() {
 		Args args = new Args("a#", "-a 10");
-		assertEquals(10, args.getInt("a"));
+		assertEquals(10, args.getInteger("a"));
 	}
 
 	@Test

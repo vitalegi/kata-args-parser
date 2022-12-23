@@ -5,7 +5,7 @@ import java.time.format.DateTimeParseException;
 
 import it.vitalegi.kata.ArgsException;
 
-public class LocalDateParser extends Parser<LocalDate> {
+public class LocalDateParser implements Parser<LocalDate> {
 	@Override
 	public LocalDate getValue(String value) {
 		try {

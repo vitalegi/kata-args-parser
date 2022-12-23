@@ -40,7 +40,7 @@ public class Args {
 		this.args = extractArgs(args);
 	}
 
-	public Boolean getBoolean(String name) {
+	public boolean getBoolean(String name) {
 		return getValue(name, Boolean.class);
 	}
 
@@ -48,7 +48,7 @@ public class Args {
 		return getValues(name, Boolean.class);
 	}
 
-	public Integer getInt(String name) {
+	public int getInteger(String name) {
 		return getValue(name, Integer.class);
 	}
 

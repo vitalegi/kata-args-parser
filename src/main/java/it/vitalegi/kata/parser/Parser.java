@@ -1,6 +1,6 @@
 package it.vitalegi.kata.parser;
 
-public abstract class Parser<E> {
+public interface Parser<E> {
 
-	public abstract E getValue(String arg);
+	E getValue(String arg);
 }
