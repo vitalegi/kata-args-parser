@@ -56,7 +56,7 @@ Il metodo lancia `ArgsException` se si verifica un errore. Esempi di errore poss
 - args contiene campi non riconosciuti
 - il valore in `args` non è compatibile col tipo atteso
 
-## `int getInt(String name)`
+## `int getInteger(String name)`
 
 Restituisce il valore del campo `name` della stringa `args` passata al costruttore.
 
@@ -94,8 +94,8 @@ Esempio:
 
 ```
 new Args("bool!,b#,text", "-bool true -bool false -b -53 -text hello -text world -text \"foo bar\"")
-getString("text"); // `"hello"`
-getStrings("text"); // ["hello", "world", "foo bar"]`
-getBoolean("bool"); // `true`
-getBooleans("bool"); // [true, false]`
+getString("text"); // "hello"
+getStrings("text"); // ["hello", "world", "foo bar"]
+getBoolean("bool"); // true
+getBooleans("bool"); // [true, false]
 ```
