@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -66,6 +68,12 @@ class ArgsTests {
 	}
 
 	@Test
+	void test_getIntegers_validValues_shouldReturnValues() {
+		Args args = new Args("a#", "-a 10 -a 15");
+		assertEquals(Arrays.asList(10, 15), args.getIntegers("a"));
+	}
+
+	@Test
 	void test_getBoolean_validTrueValue_shouldReturnValue() {
 		Args args = new Args("a!", "-a true");
 		assertEquals(true, args.getBoolean("a"));
@@ -82,6 +90,12 @@ class ArgsTests {
 		Args args = new Args("a!", "-a fail");
 		ArgsException e = assertThrows(ArgsException.class, () -> args.getBoolean("a"));
 		assertEquals("Cannot parse fail", e.getMessage());
+	}
+
+	@Test
+	void test_getBooleans_validValues_shouldReturnValues() {
+		Args args = new Args("a!", "-a true -a false -b true");
+		assertEquals(Arrays.asList(true, false), args.getBooleans("a"));
 	}
 
 	@Test
@@ -109,6 +123,12 @@ class ArgsTests {
 	}
 
 	@Test
+	void test_getStrings_multipleValues_shouldReturnValues() {
+		Args args = new Args("a", "-a \"hello world\" -a foo -b bar");
+		assertEquals(Arrays.asList("hello world", "foo"), args.getStrings("a"));
+	}
+
+	@Test
 	void test_getLocalDate_validValue_shouldReturnValue() {
 		Args args = new Args("a%", "-a 2022-12-22");
 		assertEquals(LocalDate.of(2022, 12, 22), args.getLocalDate("a"));
@@ -121,20 +141,32 @@ class ArgsTests {
 	}
 
 	@Test
+	void test_getBigDecimal_invalidValue_shouldFail() {
+		Args args = new Args("a", "-a hello");
+		ArgsException e = assertThrows(ArgsException.class, () -> args.getBigDecimal("a"));
+	}
+
+	@Test
+	void test_getBigDecimals_invalidValue_shouldFail() {
+		Args args = new Args("a", "-a hello");
+		ArgsException e = assertThrows(ArgsException.class, () -> args.getBigDecimals("a"));
+	}
+
+	@Test
 	void test_extractArgs_singleValue_shouldExtractValue() {
 		Args args = new Args();
-		Map<String, String> values = args.extractArgs("-a 10");
-		assertEquals("10", values.get("a"));
+		Map<String, List<String>> values = args.extractArgs("-a 10");
+		assertEquals(Arrays.asList("10"), values.get("a"));
 		assertEquals(1, values.size());
 	}
 
 	@Test
 	void test_extractArgs_multipleValues_shouldExtractValues() {
 		Args args = new Args();
-		Map<String, String> values = args.extractArgs("  -a 10 -b 500000  ");
+		Map<String, List<String>> values = args.extractArgs("  -a 10 -b 500000  ");
 		assertEquals(2, values.size());
-		assertEquals("10", values.get("a"));
-		assertEquals("500000", values.get("b"));
+		assertEquals(Arrays.asList("10"), values.get("a"));
+		assertEquals(Arrays.asList("500000"), values.get("b"));
 	}
 
 	@Test
@@ -148,7 +180,7 @@ class ArgsTests {
 	@Test
 	void test_extractArgs_emptyArgs_shouldReturnEmptyMap() {
 		Args args = new Args();
-		Map<String, String> values = args.extractArgs("  ");
+		Map<String, List<String>> values = args.extractArgs("  ");
 		assertEquals(0, values.size());
 	}
 }

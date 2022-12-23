@@ -2,8 +2,11 @@ package it.vitalegi.kata;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import it.vitalegi.kata.parser.BigDecimalParser;
 import it.vitalegi.kata.parser.BooleanParser;
@@ -27,7 +30,7 @@ public class Args {
 	}
 
 	protected Map<String, Parser<?>> parsers;
-	protected Map<String, String> args;
+	protected Map<String, List<String>> args;
 
 	protected Args() {
 	}
@@ -38,23 +41,43 @@ public class Args {
 	}
 
 	public Boolean getBoolean(String name) {
-		return (Boolean) getValue(name);
+		return getValue(name, Boolean.class);
+	}
+
+	public List<Boolean> getBooleans(String name) {
+		return getValues(name, Boolean.class);
 	}
 
 	public Integer getInt(String name) {
-		return (Integer) getValue(name);
+		return getValue(name, Integer.class);
+	}
+
+	public List<Integer> getIntegers(String name) {
+		return getValues(name, Integer.class);
 	}
 
 	public String getString(String name) {
-		return (String) getValue(name);
+		return getValue(name, String.class);
+	}
+
+	public List<String> getStrings(String name) {
+		return getValues(name, String.class);
 	}
 
 	public LocalDate getLocalDate(String name) {
-		return (LocalDate) getValue(name);
+		return getValue(name, LocalDate.class);
+	}
+
+	public List<LocalDate> getLocalDates(String name) {
+		return getValues(name, LocalDate.class);
 	}
 
 	public BigDecimal getBigDecimal(String name) {
-		return (BigDecimal) getValue(name);
+		return getValue(name, BigDecimal.class);
+	}
+
+	public List<BigDecimal> getBigDecimals(String name) {
+		return getValues(name, BigDecimal.class);
 	}
 
 	protected Map<String, Parser<?>> extractFields(String format) {
@@ -78,8 +101,8 @@ public class Args {
 		return parsers;
 	}
 
-	protected Map<String, String> extractArgs(String args) {
-		Map<String, String> map = new HashMap<>();
+	protected Map<String, List<String>> extractArgs(String args) {
+		Map<String, List<String>> map = new HashMap<>();
 
 		for (int i = 0; i < args.length(); i++) {
 			int nextTokenStart = args.indexOf('-', i);
@@ -115,13 +138,33 @@ public class Args {
 			}
 			String value = args.substring(nextValueStart, nextValueEnd);
 			i = nextValueEnd;
-			map.put(name, value);
+			if (!map.containsKey(name)) {
+				map.put(name, new ArrayList<>());
+			}
+			map.get(name).add(value);
 		}
 		return map;
 	}
 
-	protected Object getValue(String name) {
-		return getArgParser(name).getValue(getArgValue(name));
+	protected <E> E getValue(String name, Class<E> clazz) {
+		Object value = getArgParser(name).getValue(getArgValue(name));
+		return cast(value, clazz);
+	}
+
+	protected <E> List<E> getValues(String name, Class<E> clazz) {
+		Parser<?> parser = getArgParser(name);
+		return getArgValues(name).stream()//
+				.map(parser::getValue)//
+				.map(v -> cast(v, clazz))//
+				.collect(Collectors.toList());
+	}
+
+	protected <E> E cast(Object obj, Class<E> clazz) {
+		try {
+			return clazz.cast(obj);
+		} catch (ClassCastException e) {
+			throw new ArgsException("Cannot cast value", e);
+		}
 	}
 
 	protected Parser<?> getArgParser(String name) {
@@ -133,10 +176,14 @@ public class Args {
 	}
 
 	protected String getArgValue(String name) {
-		String value = args.get(name);
-		if (value == null) {
+		return getArgValues(name).get(0);
+	}
+
+	protected List<String> getArgValues(String name) {
+		List<String> values = args.get(name);
+		if (values == null) {
 			throw new ArgsException("Missing value for " + name);
 		}
-		return value;
+		return values;
 	}
 }
